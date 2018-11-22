@@ -11,7 +11,7 @@
 *.userprefs
 
 *.avi
-*.torrent
+s*.torrent
 
 # Build results
 [Dd]ebug/
