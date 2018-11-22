@@ -5,4 +5,21 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="BencodeNET" Version="2.2.24" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HomeWorld.Torrent\HomeWorld.Torrent.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Soldat_1998_BDRip_by_Dalemake.avi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="soldier.torrent">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
