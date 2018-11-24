@@ -12,6 +12,7 @@
 
 *.avi
 s*.torrent
+.vscode
 
 # Build results
 [Dd]ebug/
