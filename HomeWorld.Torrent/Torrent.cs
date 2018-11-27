@@ -5,7 +5,7 @@ using System.Text;
 
 namespace HomeWorld.Torrent
 {
-    public class Torrent
+    public class Torrent : IBencodeExtensible
     {
         public Dictionary<BString, IBEncodedObject> Extensions { get; }
         public Uri Announce { get; set; }
