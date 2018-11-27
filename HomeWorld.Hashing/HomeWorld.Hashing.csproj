@@ -2,11 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HomeWorld.Hashing\HomeWorld.Hashing.csproj" />
+    <PackageReference Include="System.Runtime.Intrinsics.Experimental" Version="4.6.0-preview1-26724-02" />
   </ItemGroup>
 
 </Project>
