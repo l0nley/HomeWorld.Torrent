@@ -7,7 +7,8 @@ namespace HomeWorld.Benchmarks
     {
         static void Main(string[] args)
         {
-            var summary = BenchmarkRunner.Run<CRC>();
+            Console.WriteLine(BitConverter.IsLittleEndian);
+            // var summary = BenchmarkRunner.Run<CRC>();
             Console.ReadLine();
         }
     }

@@ -1,5 +1,4 @@
-﻿using HomeWorld.Hashing;
-using System;
+﻿using System;
 using System.Linq;
 using System.Text;
 
@@ -52,7 +51,14 @@ namespace HomeWorld.Torrent.BEncode
 
             unchecked
             {
-                _hashCode = (int)CRC32.Compute(AsciiBytes);
+                var prime = 16777619u;
+                var hash = 2166136261;
+                foreach (var byt in AsciiBytes)
+                {
+                    hash ^= byt;
+                    hash *= prime;
+                }
+                _hashCode = (int)hash;
             }
 
             return _hashCode.Value;

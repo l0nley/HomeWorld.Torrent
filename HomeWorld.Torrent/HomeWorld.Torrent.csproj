@@ -5,8 +5,4 @@
     <LangVersion>7.2</LangVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\HomeWorld.Hashing\HomeWorld.Hashing.csproj" />
-  </ItemGroup>
-
 </Project>
