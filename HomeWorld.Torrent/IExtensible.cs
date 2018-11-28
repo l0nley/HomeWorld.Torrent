@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace HomeWorld.Torrent
 {
-    public interface IBencodeExtensible
+    public interface IExtensible
     {
         Dictionary<BString, IBEncodedObject> Extensions { get; }
     }

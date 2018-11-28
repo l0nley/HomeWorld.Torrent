@@ -29,6 +29,7 @@ namespace HomeWorld.Torrent
             if (dictionary.TryGetValue(Constants.EncodingKey, out IBEncodedObject enc))
             {
                 stringEncoding = Encoding.GetEncoding((BString)enc);
+                torrent.Encoding = stringEncoding;
             }
             else
             {

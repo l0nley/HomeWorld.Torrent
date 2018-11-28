@@ -5,7 +5,7 @@ namespace HomeWorld.Torrent
 {
     public static class TorrentExtensions
     {
-        public static bool TryGetExtension<T>(this IBencodeExtensible extensible, BString extensionKey, out T value)
+        public static bool TryGetExtension<T>(this IExtensible extensible, BString extensionKey, out T value)
             where T : class, IBEncodedObject
         {
             extensible = extensible ?? throw new ArgumentNullException(nameof(extensible));

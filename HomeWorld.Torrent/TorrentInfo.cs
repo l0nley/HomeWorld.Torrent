@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace HomeWorld.Torrent
 {
-    public class TorrentInfo : IBencodeExtensible
+    public class TorrentInfo : IExtensible
     {
         public BString Name { get; set; }
         public BNumber PieceLength { get; set; }

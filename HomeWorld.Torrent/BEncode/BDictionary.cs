@@ -8,7 +8,7 @@ namespace HomeWorld.Torrent.BEncode
     {
         public BEncodeType Type => BEncodeType.Dictionary;
 
-        internal Dictionary<BString, IBEncodedObject> Dictionary { get; set; }
+        internal SortedDictionary<BString, IBEncodedObject> Dictionary { get; set; }
 
         public IBEncodedObject this[BString index]
         {
@@ -17,7 +17,6 @@ namespace HomeWorld.Torrent.BEncode
                 return Dictionary[index];
             }
         }
-
 
         public bool ContainsKey(BString key) => Dictionary.ContainsKey(key);
 

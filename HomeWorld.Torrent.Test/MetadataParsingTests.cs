@@ -1,4 +1,4 @@
-using HomeWorld.Torrent.BEncode;
+﻿using HomeWorld.Torrent.BEncode;
 using System;
 using System.IO;
 using Xunit;
@@ -66,6 +66,21 @@ namespace HomeWorld.Torrent.Test
             var trt = parser.Parse(new ReadOnlySpan<byte>(contens), 0);
             Assert.True(trt.TryGetExtension(ExtensionKeys.CreatedBy, out BString value));
             Assert.NotNull(value);
+        }
+
+        [Fact]
+        public void SavesFile()
+        {
+            var contens = GetTorrentContents();
+            var parser = new TorrentParser();
+            var trt = parser.Parse(new ReadOnlySpan<byte>(contens), 0);
+            var builder = TorrentBuilder.Load(trt);
+            builder.SetName("русский");
+            var modified = TorrentBuilder.Build(builder);
+            using(var file = File.Create("output.torrent"))
+            {
+                TorrentBuilder.Save(file, modified);
+            }
         }
 
         private byte[] GetTorrentContents()

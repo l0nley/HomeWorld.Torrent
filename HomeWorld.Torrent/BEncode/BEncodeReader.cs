@@ -37,7 +37,7 @@ namespace HomeWorld.Torrent.BEncode
         private BDictionary ReadDictionary(ReadOnlySpan<byte> bytes, ref int cursor)
         {
             cursor++;
-            var dict = new Dictionary<BString, IBEncodedObject>();
+            var dict = new SortedDictionary<BString, IBEncodedObject>(BStringComparer.Instance);
             while (bytes[cursor] != (byte)'e')
             {
                 var key = ReadString(bytes, ref cursor);
