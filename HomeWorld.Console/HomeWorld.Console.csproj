@@ -10,10 +10,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HomeWorld.Torrent\HomeWorld.Torrent.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="Soldat_1998_BDRip_by_Dalemake.avi">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
