@@ -27,7 +27,7 @@ namespace HomeWorld.Torrent.BEncode
             {
                 return 1;
             }
-            return string.Compare(Encoding.ASCII.GetString(str1.AsciiBytes), Encoding.ASCII.GetString(str2.AsciiBytes));
+            return string.Compare(Encoding.ASCII.GetString(str1.Bytes), Encoding.ASCII.GetString(str2.Bytes));
         }
     }
 }

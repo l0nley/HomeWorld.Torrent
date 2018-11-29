@@ -8,17 +8,18 @@ namespace HomeWorld.Torrent.BEncode
     {
         public BEncodeType Type => BEncodeType.String;
 
-        internal byte[] AsciiBytes { get; set; }
+        internal byte[] Bytes { get; }
         private int? _hashCode = null;
 
-        internal BString()
+        internal BString(byte[] bytes)
         {
+            Bytes = bytes ?? throw new ArgumentNullException(nameof(bytes));
         }
 
-        public BString(string str, Encoding incomingStringEncoding)
+        public BString(string str, Encoding encoding)
         {
-            incomingStringEncoding = incomingStringEncoding ?? throw new ArgumentNullException(nameof(incomingStringEncoding));
-            AsciiBytes = Encoding.Convert(incomingStringEncoding, Encoding.ASCII, incomingStringEncoding.GetBytes(str));
+            encoding = encoding ?? throw new ArgumentNullException(nameof(encoding));
+            Bytes = encoding.GetBytes(str);
         }
 
         public static implicit operator string(BString str)
@@ -28,18 +29,18 @@ namespace HomeWorld.Torrent.BEncode
 
         public override string ToString()
         {
-            return Encoding.Default.GetString(Encoding.Convert(Encoding.ASCII, Encoding.Default, AsciiBytes));
+            return ToString(Encoding.UTF8);
         }
+
 
         public string ToString(Encoding encoding)
         {
-            encoding = encoding ?? throw new ArgumentNullException(nameof(encoding));
-            return encoding.GetString(Encoding.Convert(Encoding.ASCII, encoding, AsciiBytes));
+            return encoding.GetString(Bytes);
         }
 
         public override bool Equals(object obj)
         {
-            return AsciiBytes.SequenceEqual(((BString)obj).AsciiBytes);
+            return Bytes.SequenceEqual(((BString)obj).Bytes);
         }
 
         public override int GetHashCode()
@@ -53,7 +54,7 @@ namespace HomeWorld.Torrent.BEncode
             {
                 var prime = 16777619u;
                 var hash = 2166136261;
-                foreach (var byt in AsciiBytes)
+                foreach (var byt in Bytes)
                 {
                     hash ^= byt;
                     hash *= prime;

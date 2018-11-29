@@ -5,11 +5,11 @@ namespace HomeWorld.Torrent
 {
     public static class ExtensionKeys
     {
-        public static readonly BString Comment = new BString("comment", Encoding.ASCII);
-        public static readonly BString AnnounceList = new BString("announce-list", Encoding.ASCII);
-        public static readonly BString CreatedBy = new BString("created by", Encoding.ASCII);
-        public static readonly BString CreationDate = new BString("creation date", Encoding.ASCII);
-        public static readonly BString Publisher = new BString("publisher", Encoding.ASCII);
-        public static readonly BString PublisherUrl = new BString("publisher-url", Encoding.ASCII);
+        public static readonly BString Comment = new BString(Encoding.ASCII.GetBytes("comment"));
+        public static readonly BString AnnounceList = new BString(Encoding.ASCII.GetBytes("announce-list"));
+        public static readonly BString CreatedBy = new BString(Encoding.ASCII.GetBytes("created by"));
+        public static readonly BString CreationDate = new BString(Encoding.ASCII.GetBytes("creation date"));
+        public static readonly BString Publisher = new BString(Encoding.ASCII.GetBytes("publisher"));
+        public static readonly BString PublisherUrl = new BString(Encoding.ASCII.GetBytes("publisher-url"));
     }
 }

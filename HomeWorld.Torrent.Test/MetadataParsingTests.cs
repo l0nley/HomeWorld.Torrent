@@ -75,7 +75,7 @@ namespace HomeWorld.Torrent.Test
             var parser = new TorrentParser();
             var trt = parser.Parse(new ReadOnlySpan<byte>(contens), 0);
             var builder = TorrentBuilder.Load(trt);
-            builder.SetName("русский");
+            builder.SetName("русский беларускі ў");
             var modified = TorrentBuilder.Build(builder);
             using(var file = File.Create("output.torrent"))
             {

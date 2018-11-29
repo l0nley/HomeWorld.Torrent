@@ -46,7 +46,7 @@ namespace HomeWorld.Torrent.Test
             var cursor = 0;
             var element = (BString)reader.ReadElement(bytes, ref cursor);
             Assert.Equal(BEncodeType.String, element.Type);
-            Assert.Equal(expected, element.ToString(Encoding.ASCII));
+            Assert.Equal(expected, element.ToString());
         }
 
         [Theory]

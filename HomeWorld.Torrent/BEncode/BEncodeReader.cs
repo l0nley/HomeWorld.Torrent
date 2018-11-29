@@ -79,10 +79,7 @@ namespace HomeWorld.Torrent.BEncode
             cursor++;
             var stringBytes = bytes.Slice(cursor, stringLength);
             cursor += stringLength;
-            return new BString
-            {
-                AsciiBytes = stringBytes.ToArray()
-            };
+            return new BString(stringBytes.ToArray());
         }
 
         private BNumber ReadNumber(ReadOnlySpan<byte> bytes, ref int cursor)

@@ -30,11 +30,11 @@ namespace HomeWorld.Torrent.BEncode
 
         public void WriteString(Stream stream, BString str)
         {
-            var slen = str.AsciiBytes.Length.ToString();
+            var slen = str.Bytes.Length.ToString();
             var len = Encoding.ASCII.GetBytes(slen);
             stream.Write(len);
             stream.WriteByte((byte)':');
-            stream.Write(str.AsciiBytes);
+            stream.Write(str.Bytes);
         }
 
         public void WriteNumber(Stream stream, BNumber number)

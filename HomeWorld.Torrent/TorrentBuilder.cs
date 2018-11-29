@@ -80,13 +80,11 @@ namespace HomeWorld.Torrent
         public static Torrent Build(TorrentBuilder builder)
         {
             builder = builder ?? throw new ArgumentNullException(nameof(builder));
-            var pieces = new BString
-            {
-                AsciiBytes = builder._pieces
-            };
+            var encoding = builder._encoding ?? Encoding.UTF8;
+            var pieces = new BString(builder._pieces);
             var info = new TorrentInfo
             {
-                Name = new BString(builder._name, Encoding.Default),
+                Name = new BString(builder._name, encoding),
                 PieceLength = new BNumber(builder._pieceLength),
                 Pieces = pieces
             };
@@ -102,7 +100,7 @@ namespace HomeWorld.Torrent
                 };
                 foreach (var part in key.Split('/'))
                 {
-                    var s = new BString(part, Encoding.Default);
+                    var s = new BString(part, encoding);
                     pathlist.Objects.Add(s);
                 }
                 info.Files.Add((pathlist, new BNumber(value)));
@@ -125,6 +123,8 @@ namespace HomeWorld.Torrent
 
         public static void Save(Stream stream, Torrent torrent)
         {
+            torrent = torrent ?? throw new ArgumentNullException(nameof(torrent));
+            stream = stream ?? throw new ArgumentNullException(nameof(stream));
             var dic = GetDictionary(torrent);
             var writer = new BEncodeWriter();
             writer.WriteElement(stream, dic);
@@ -132,12 +132,13 @@ namespace HomeWorld.Torrent
 
         private static BDictionary GetDictionary(Torrent torrent)
         {
+            var encoding = torrent.Encoding ?? Encoding.UTF8;
             var dic = new BDictionary
             {
                 Dictionary = new SortedDictionary<BString, IBEncodedObject>(BStringComparer.Instance)
             };
-            dic.Dictionary.Add(Constants.AnnounceKey, new BString(torrent.Announce.ToString(), Encoding.Default));
-            dic.Dictionary.Add(Constants.EncodingKey, new BString(torrent.Encoding.WebName, Encoding.Default));
+            dic.Dictionary.Add(Constants.AnnounceKey, new BString(torrent.Announce.ToString(), encoding));
+            dic.Dictionary.Add(Constants.EncodingKey, new BString(torrent.Encoding.WebName, encoding));
             foreach (var (key, value) in torrent.Extensions)
             {
                 dic.Dictionary.Add(key, value);
@@ -193,12 +194,12 @@ namespace HomeWorld.Torrent
             var enc = torrent.Encoding ?? Encoding.UTF8;
             var builder = new TorrentBuilder(enc)
             {
-                _name = GetString(torrent.Info.Name, enc),
+                _name = torrent.Info.Name.ToString(),
                 _announce = torrent.Announce,
                 _pieceLength = torrent.Info.PieceLength,
-                _pieces = new byte[torrent.Info.Pieces.AsciiBytes.Length]
+                _pieces = new byte[torrent.Info.Pieces.Bytes.Length]
             };
-            Array.Copy(torrent.Info.Pieces.AsciiBytes, builder._pieces, torrent.Info.Pieces.AsciiBytes.Length);
+            Array.Copy(torrent.Info.Pieces.Bytes, builder._pieces, torrent.Info.Pieces.Bytes.Length);
             foreach (var (key, value) in torrent.Extensions)
             {
                 builder._main.Add(key, value);
@@ -209,17 +210,11 @@ namespace HomeWorld.Torrent
             }
             foreach (var (pth, len) in torrent.Info.Files)
             {
-                var path = string.Join(Path.PathSeparator, pth.Select(_ => GetString((BString)_, torrent.Encoding)));
+                var path = string.Join(Path.PathSeparator, pth.Select(_ => ((BString)_).ToString()));
                 builder._files.Add(path, len);
             }
 
             return builder;
-        }
-
-        private static string GetString(BString value, Encoding encoding)
-        {
-            return Encoding.Default.GetString(
-                Encoding.Convert(encoding, Encoding.Default, encoding.GetBytes(value.ToString(encoding))));
         }
     }
 }
