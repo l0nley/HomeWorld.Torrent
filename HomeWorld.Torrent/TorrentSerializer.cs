@@ -136,7 +136,7 @@ namespace HomeWorld.Torrent
                 }
             }
 
-            if (torrent.Announce == null || torrent.Info == null)
+            if (torrent.Info == null)
             {
                 throw new ParsingException(MalformedTorrent);
             }

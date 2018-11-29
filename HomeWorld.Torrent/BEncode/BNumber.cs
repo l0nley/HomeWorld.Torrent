@@ -41,6 +41,16 @@ namespace HomeWorld.Torrent.BEncode
             return long.Parse(number.AsciiValue, CultureInfo.InvariantCulture);
         }
 
+        public static implicit operator uint(BNumber number)
+        {
+            return uint.Parse(number.AsciiValue, CultureInfo.InvariantCulture);
+        }
+
+        public static implicit operator ulong(BNumber number)
+        {
+            return ulong.Parse(number.AsciiValue, CultureInfo.InvariantCulture);
+        }
+
         public static implicit operator double(BNumber number)
         {
             return double.Parse(number.AsciiValue, CultureInfo.InvariantCulture);

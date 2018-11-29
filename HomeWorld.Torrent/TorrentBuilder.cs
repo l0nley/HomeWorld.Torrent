@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace HomeWorld.Torrent
@@ -12,7 +13,7 @@ namespace HomeWorld.Torrent
         private readonly Encoding _encoding;
         private readonly Dictionary<BString, IBEncodedObject> _main;
         private readonly Dictionary<BString, IBEncodedObject> _info;
-        private readonly Dictionary<string, long> _files;
+        private readonly List<(string, long)> _files;
 
         private long _pieceLength;
         private string _name;
@@ -24,7 +25,7 @@ namespace HomeWorld.Torrent
             _encoding = stringEncoding ?? throw new ArgumentNullException(nameof(stringEncoding));
             _main = new Dictionary<BString, IBEncodedObject>();
             _info = new Dictionary<BString, IBEncodedObject>();
-            _files = new Dictionary<string, long>();
+            _files = new List<(string, long)>();
         }
 
         public void SetName(string name)
@@ -67,14 +68,53 @@ namespace HomeWorld.Torrent
             _pieceLength = length;
         }
 
+        public void ClearFiles()
+        {
+            _files.Clear();
+            _pieces = null;
+        }
+
         public void AddFile(string relativePath, long length)
         {
-            _files.Add(relativePath, length);
+            if (_files.Any(_ => _.Item1 == relativePath))
+            {
+                throw new ArgumentException($"Item with key {relativePath} already exists", nameof(relativePath));
+            }
+            _files.Add((relativePath, length));
         }
 
         public void CalculatePieces(IFileStreamProvider provider)
         {
-            throw new NotImplementedException();
+            provider = provider ?? throw new ArgumentNullException(nameof(provider));
+            var files = new List<(Stream, long, bool)>(_files.Count);
+            foreach (var (path, len) in _files)
+            {
+                var stream = provider.Resolve(path, out bool autoClose);
+                if (stream == null)
+                {
+                    throw new InvalidOperationException($"File stream provider was not able to resolve {path}");
+                }
+                files.Add((stream, len, autoClose));
+            }
+            using (var streamSequence = new StreamSequence(files))
+            {
+                var buff = new byte[_pieceLength];
+                using (var ms = new MemoryStream())
+                {
+                    using (var sha = SHA1.Create())
+                    {
+                        int readed;
+                        do
+                        {
+                            readed = streamSequence.Read(buff, 0, buff.Length);
+                            var pieceHash = sha.ComputeHash(buff, 0, readed);
+                            ms.Write(pieceHash);
+
+                        } while (readed == buff.Length);
+                    }
+                    _pieces = ms.ToArray();
+                }
+            }
         }
 
         public Torrent Build()
@@ -120,8 +160,6 @@ namespace HomeWorld.Torrent
             return torrent;
         }
 
-       
-
         public static TorrentBuilder FromExisting(Torrent torrent)
         {
             torrent = torrent ?? throw new ArgumentNullException(nameof(torrent));
@@ -145,7 +183,7 @@ namespace HomeWorld.Torrent
             foreach (var (pth, len) in torrent.Info.Files)
             {
                 var path = string.Join(Path.PathSeparator, pth.Select(_ => ((BString)_).ToString()));
-                builder._files.Add(path, len);
+                builder._files.Add((path, len));
             }
 
             return builder;

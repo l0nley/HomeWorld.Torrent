@@ -11,7 +11,7 @@ namespace HomeWorld.Torrent.BEncode
         internal byte[] Bytes { get; }
         private int? _hashCode = null;
 
-        internal BString(byte[] bytes)
+        public BString(byte[] bytes)
         {
             Bytes = bytes ?? throw new ArgumentNullException(nameof(bytes));
         }
@@ -19,7 +19,14 @@ namespace HomeWorld.Torrent.BEncode
         public BString(string str, Encoding encoding)
         {
             encoding = encoding ?? throw new ArgumentNullException(nameof(encoding));
-            Bytes = encoding.GetBytes(str);
+            if (string.IsNullOrEmpty(str))
+            {
+                Bytes = new byte[0];
+            }
+            else
+            {
+                Bytes = encoding.GetBytes(str);
+            }
         }
 
         public static implicit operator string(BString str)
