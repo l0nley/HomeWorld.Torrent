@@ -15,9 +15,9 @@ namespace HomeWorld.Torrent.Test
         public void ReadsInt(string input, int value)
         {
             var bytes = new ReadOnlySpan<byte>(Encoding.ASCII.GetBytes(input));
-            var reader = new BEncodeReader();
+            var reader = new BEncodeSerializer();
             var cursor = 0;
-            var element = (BNumber)reader.ReadElement(bytes, ref cursor);
+            var element = (BNumber)reader.Deserialize(bytes, ref cursor);
             Assert.Equal(BEncodeType.Number, element.Type);
             Assert.Equal(value, element);
         }
@@ -28,9 +28,9 @@ namespace HomeWorld.Torrent.Test
         public void ReadsDouble(string input, double value)
         {
             var bytes = new ReadOnlySpan<byte>(Encoding.ASCII.GetBytes(input));
-            var reader = new BEncodeReader();
+            var reader = new BEncodeSerializer();
             var cursor = 0;
-            var element = (BNumber)reader.ReadElement(bytes, ref cursor);
+            var element = (BNumber)reader.Deserialize(bytes, ref cursor);
             Assert.Equal(BEncodeType.Number, element.Type);
             Assert.Equal(value, element);
         }
@@ -42,9 +42,9 @@ namespace HomeWorld.Torrent.Test
         public void ReadsString(string input, string expected)
         {
             var bytes = new ReadOnlySpan<byte>(Encoding.ASCII.GetBytes(input));
-            var reader = new BEncodeReader();
+            var reader = new BEncodeSerializer();
             var cursor = 0;
-            var element = (BString)reader.ReadElement(bytes, ref cursor);
+            var element = (BString)reader.Deserialize(bytes, ref cursor);
             Assert.Equal(BEncodeType.String, element.Type);
             Assert.Equal(expected, element.ToString());
         }
@@ -55,9 +55,9 @@ namespace HomeWorld.Torrent.Test
         public void ReadsListSimple(string input, string[] values)
         {
             var bytes = new ReadOnlySpan<byte>(Encoding.ASCII.GetBytes(input));
-            var reader = new BEncodeReader();
+            var reader = new BEncodeSerializer();
             var cursor = 0;
-            var element = (BList)reader.ReadElement(bytes, ref cursor);
+            var element = (BList)reader.Deserialize(bytes, ref cursor);
             Assert.Equal(BEncodeType.List, element.Type);
             Assert.Equal(values.Length, element.Count);
             for (var i = 0; i < values.Length; i++)
@@ -71,9 +71,9 @@ namespace HomeWorld.Torrent.Test
         public void ReadsListOfLists()
         {
             var bytes = Encoding.ASCII.GetBytes("l3:foo3:barl3:buz3:baree");
-            var reader = new BEncodeReader();
+            var reader = new BEncodeSerializer();
             var cursor = 0;
-            var element = (BList)reader.ReadElement(bytes, ref cursor);
+            var element = (BList)reader.Deserialize(bytes, ref cursor);
             Assert.Equal(BEncodeType.List, element.Type);
             var elem0 = element[0];
             Assert.Equal(BEncodeType.String, elem0.Type);
@@ -97,9 +97,9 @@ namespace HomeWorld.Torrent.Test
         public void ReadListOfDictionaries()
         {
             var bytes = Encoding.ASCII.GetBytes("ld3:foo3:bared3:buz3:butee");
-            var reader = new BEncodeReader();
+            var reader = new BEncodeSerializer();
             var cursor = 0;
-            var element = (BList)reader.ReadElement(bytes, ref cursor);
+            var element = (BList)reader.Deserialize(bytes, ref cursor);
             Assert.Equal(BEncodeType.List, element.Type);
             Assert.Equal(2, element.Count);
             var elem0 = (BDictionary)element[0];
@@ -122,9 +122,9 @@ namespace HomeWorld.Torrent.Test
         public void ReadDictionarySimple(string input, string[] values)
         {
             var bytes = new ReadOnlySpan<byte>(Encoding.ASCII.GetBytes(input));
-            var reader = new BEncodeReader();
+            var reader = new BEncodeSerializer();
             var cursor = 0;
-            var element = (BDictionary)reader.ReadElement(bytes, ref cursor);
+            var element = (BDictionary)reader.Deserialize(bytes, ref cursor);
             Assert.Equal(BEncodeType.Dictionary, element.Type);
             var dic = new Dictionary<string, string>();
             for(var i=0;i< values.Length;i+=2)

@@ -77,26 +77,25 @@ namespace HomeWorld.Torrent
             throw new NotImplementedException();
         }
 
-        public static Torrent Build(TorrentBuilder builder)
+        public Torrent Build()
         {
-            builder = builder ?? throw new ArgumentNullException(nameof(builder));
-            var encoding = builder._encoding ?? Encoding.UTF8;
-            var pieces = new BString(builder._pieces);
+            var encoding = _encoding ?? Encoding.UTF8;
+            var pieces = new BString(_pieces);
             var info = new TorrentInfo
             {
-                Name = new BString(builder._name, encoding),
-                PieceLength = new BNumber(builder._pieceLength),
+                Name = new BString(_name, encoding),
+                PieceLength = new BNumber(_pieceLength),
                 Pieces = pieces
             };
-            foreach (var (key, value) in builder._info)
+            foreach (var (key, value) in _info)
             {
                 info.Extensions.Add(key, value);
             }
-            foreach (var (key, value) in builder._files)
+            foreach (var (key, value) in _files)
             {
                 var pathlist = new BList
                 {
-                    Objects = new List<IBEncodedObject>(builder._files.Count)
+                    Objects = new List<IBEncodedObject>(_files.Count)
                 };
                 foreach (var part in key.Split('/'))
                 {
@@ -108,12 +107,12 @@ namespace HomeWorld.Torrent
 
             var torrent = new Torrent
             {
-                Encoding = builder._encoding,
-                Announce = builder._announce,
+                Encoding = _encoding,
+                Announce = _announce,
                 Info = info
             };
 
-            foreach (var (key, value) in builder._main)
+            foreach (var (key, value) in _main)
             {
                 torrent.Extensions.Add(key, value);
             }
@@ -121,74 +120,9 @@ namespace HomeWorld.Torrent
             return torrent;
         }
 
-        public static void Save(Stream stream, Torrent torrent)
-        {
-            torrent = torrent ?? throw new ArgumentNullException(nameof(torrent));
-            stream = stream ?? throw new ArgumentNullException(nameof(stream));
-            var dic = GetDictionary(torrent);
-            var writer = new BEncodeWriter();
-            writer.WriteElement(stream, dic);
-        }
+       
 
-        private static BDictionary GetDictionary(Torrent torrent)
-        {
-            var encoding = torrent.Encoding ?? Encoding.UTF8;
-            var dic = new BDictionary
-            {
-                Dictionary = new SortedDictionary<BString, IBEncodedObject>(BStringComparer.Instance)
-            };
-            dic.Dictionary.Add(Constants.AnnounceKey, new BString(torrent.Announce.ToString(), encoding));
-            dic.Dictionary.Add(Constants.EncodingKey, new BString(torrent.Encoding.WebName, encoding));
-            foreach (var (key, value) in torrent.Extensions)
-            {
-                dic.Dictionary.Add(key, value);
-            }
-            var infoDic = new BDictionary
-            {
-                Dictionary = new SortedDictionary<BString, IBEncodedObject>(BStringComparer.Instance)
-            };
-            foreach (var (key, value) in torrent.Info.Extensions)
-            {
-                infoDic.Dictionary.Add(key, value);
-            }
-            if (torrent.Info.Name != null)
-            {
-                infoDic.Dictionary.Add(Constants.InfoNameKey, torrent.Info.Name);
-            }
-            infoDic.Dictionary.Add(Constants.InfoPieceLengthKey, torrent.Info.PieceLength);
-            infoDic.Dictionary.Add(Constants.InfoPiecesKey, torrent.Info.Pieces);
-            if (torrent.Info.Files.Count == 1)
-            {
-                var (path, len) = torrent.Info.Files[0];
-                infoDic.Dictionary.Add(Constants.InfoLengthKey, len);
-            }
-            else
-            {
-                var lst = new BList
-                {
-                    Objects = new List<IBEncodedObject>(torrent.Info.Files.Count)
-                };
-                foreach (var (key, value) in torrent.Info.Files)
-                {
-                    var fdic = new BDictionary
-                    {
-                        Dictionary = new SortedDictionary<BString, IBEncodedObject>(BStringComparer.Instance)
-                        {
-                            { Constants.InfoFilePathKey, key },
-                            { Constants.InfoFileLengthKey, value }
-                        }
-                    };
-                    lst.Objects.Add(fdic);
-                }
-                infoDic.Dictionary.Add(Constants.InfoFilesKey, lst);
-            }
-
-            dic.Dictionary.Add(Constants.InfoKey, infoDic);
-
-            return dic;
-        }
-
-        public static TorrentBuilder Load(Torrent torrent)
+        public static TorrentBuilder FromExisting(Torrent torrent)
         {
             torrent = torrent ?? throw new ArgumentNullException(nameof(torrent));
             var enc = torrent.Encoding ?? Encoding.UTF8;

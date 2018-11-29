@@ -12,8 +12,8 @@ namespace HomeWorld.Torrent.Test
         public void RealTorrentParsed()
         {
             var contens = GetTorrentContents();
-            var parser = new TorrentParser();
-            var trt = parser.Parse(new ReadOnlySpan<byte>(contens), 0);
+            var parser = new TorrentSerializer();
+            var trt = parser.Deserialize(new ReadOnlySpan<byte>(contens));
         }
 
         
@@ -21,8 +21,8 @@ namespace HomeWorld.Torrent.Test
         public void ReturnsComment()
         {
             var contens = GetTorrentContents();
-            var parser = new TorrentParser();
-            var trt = parser.Parse(new ReadOnlySpan<byte>(contens), 0);
+            var parser = new TorrentSerializer();
+            var trt = parser.Deserialize(new ReadOnlySpan<byte>(contens));
             Assert.True(trt.TryGetExtension(ExtensionKeys.Comment, out BString value));
             Assert.NotNull(value);
         }
@@ -32,8 +32,8 @@ namespace HomeWorld.Torrent.Test
         public void ReturnsPublisherUri()
         {
             var contens = GetTorrentContents();
-            var parser = new TorrentParser();
-            var trt = parser.Parse(new ReadOnlySpan<byte>(contens), 0);
+            var parser = new TorrentSerializer();
+            var trt = parser.Deserialize(new ReadOnlySpan<byte>(contens));
             Assert.True(trt.TryGetExtension(ExtensionKeys.PublisherUrl, out BString value));
             Assert.NotNull(value);
         }
@@ -42,8 +42,8 @@ namespace HomeWorld.Torrent.Test
         public void ReturnsPublisher()
         {
             var contens = GetTorrentContents();
-            var parser = new TorrentParser();
-            var trt = parser.Parse(new ReadOnlySpan<byte>(contens), 0);
+            var parser = new TorrentSerializer();
+            var trt = parser.Deserialize(new ReadOnlySpan<byte>(contens));
             Assert.True(trt.TryGetExtension(ExtensionKeys.Publisher, out BString value));
             Assert.NotNull(value);
         }
@@ -52,8 +52,8 @@ namespace HomeWorld.Torrent.Test
         public void ReturnsCreationDate()
         {
             var contens = GetTorrentContents();
-            var parser = new TorrentParser();
-            var trt = parser.Parse(new ReadOnlySpan<byte>(contens), 0);
+            var parser = new TorrentSerializer();
+            var trt = parser.Deserialize(new ReadOnlySpan<byte>(contens));
             Assert.True(trt.TryGetExtension(ExtensionKeys.CreationDate, out BNumber value));
             Assert.NotNull(value);
         }
@@ -62,8 +62,8 @@ namespace HomeWorld.Torrent.Test
         public void ReturnsCreator()
         {
             var contens = GetTorrentContents();
-            var parser = new TorrentParser();
-            var trt = parser.Parse(new ReadOnlySpan<byte>(contens), 0);
+            var parser = new TorrentSerializer();
+            var trt = parser.Deserialize(new ReadOnlySpan<byte>(contens));
             Assert.True(trt.TryGetExtension(ExtensionKeys.CreatedBy, out BString value));
             Assert.NotNull(value);
         }
@@ -72,14 +72,14 @@ namespace HomeWorld.Torrent.Test
         public void SavesFile()
         {
             var contens = GetTorrentContents();
-            var parser = new TorrentParser();
-            var trt = parser.Parse(new ReadOnlySpan<byte>(contens), 0);
-            var builder = TorrentBuilder.Load(trt);
+            var parser = new TorrentSerializer();
+            var trt = parser.Deserialize(new ReadOnlySpan<byte>(contens));
+            var builder = TorrentBuilder.FromExisting(trt);
             builder.SetName("русский беларускі ў");
-            var modified = TorrentBuilder.Build(builder);
+            var modified = builder.Build();
             using(var file = File.Create("output.torrent"))
             {
-                TorrentBuilder.Save(file, modified);
+                parser.Serialize(file, modified);
             }
         }
 
